@@ -1,24 +1,41 @@
 import numpy as np
+import cv2
 
-def one_norm_distance(v1, v2):
+def calculate_histogram(image_path, num_bins=256):
     """
-    計算兩個向量之間的1-范數距離（曼哈頓距離）。
-
-    :param v1: 第一個向量（NumPy數組）
-    :param v2: 第二個向量（NumPy數組）
-    :return: 1-范數距離（曼哈頓距離）
+    計算灰度直方圖
+    :param image_path: 圖像路徑
+    :param num_bins: 直方圖分箱數
+    :return: 直方圖 (numpy array)
     """
-    # 確保兩個向量的形狀一致
-    if v1.shape != v2.shape:
-        raise ValueError("向量的大小不一致！")
+    # 讀取灰度圖像
+    img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    if img is None:
+        raise ValueError("Image not found or invalid format.")
     
-    # 計算元素差的絕對值，然後對所有元素求和
-    distance = np.sum(np.abs(v1 - v2))
+    # 計算直方圖
+    hist = cv2.calcHist([img], [0], None, [num_bins], [0, 256])
+    return hist.ravel()  # 展平為一維向量
+
+def calculate_1_norm_distance_histogram(hist1, hist2):
+    """
+    計算兩個直方圖之間的 1-Norm Distance
+    :param hist1: 第一個直方圖
+    :param hist2: 第二個直方圖
+    :return: 1-Norm Distance (float)
+    """
+    # 確保兩個直方圖長度一致
+    if len(hist1) != len(hist2):
+        raise ValueError("Histograms must have the same number of bins.")
+    
+    # 計算 1-Norm Distance
+    distance = np.sum(np.abs(hist1 - hist2))
     return distance
 
-# 測試示例
-v1 = np.array([1, 2, 3, 4])
-v2 = np.array([4, 5, 6, 7])
+# 範例使用
+# 假設你有兩張 LBP 結果圖片
+hist1 = calculate_histogram('lbp2_result.jpg')  # 第一張圖片的直方圖
+hist2 = calculate_histogram('sobel_result.jpg')  # 第二張圖片的直方圖
 
-distance = one_norm_distance(v1, v2)
-print(f"1-范數距離（曼哈頓距離）: {distance}")
+distance = calculate_1_norm_distance_histogram(hist1, hist2)
+print(f"1-Norm Distance between the two histograms: {distance}")

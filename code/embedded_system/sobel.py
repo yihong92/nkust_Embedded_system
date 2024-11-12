@@ -22,7 +22,7 @@ def apply_sobel(image_path):
     magnitude = np.uint8(np.absolute(magnitude))
     
     # 創建圖像顯示
-    plt.figure(figsize=(15, 10))
+    plt.figure(figsize=(8, 7))
     
     plt.subplot(2, 2, 1)
     plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
@@ -53,4 +53,4 @@ def apply_sobel(image_path):
     return magnitude
 
 # 使用函數
-result = apply_sobel('road.jpg')
+apply_sobel('road.jpg')

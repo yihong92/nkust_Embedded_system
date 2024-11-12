@@ -1,41 +1,34 @@
 import numpy as np
 from PIL import Image
+import matplotlib.pyplot as plt
 
 def get_pixel_value(img, center, x, y):
     """
     獲取像素值，如果座標超出圖像範圍則返回中心點的值
     """
-    new_value = 0
-    try:
-        if img[x][y] >= center:
-            new_value = 1
-    except:
-        pass
-    return new_value
+    if 0 <= x < img.shape[0] and 0 <= y < img.shape[1] and img[x][y] >= center:
+        return 1
+    return 0
 
 def calculate_lbp(img, x, y):
     """
     計算單個像素的LBP值
     """
     center = img[x][y]
-    val_ar = []
+    val_ar = [
+        get_pixel_value(img, center, x-1, y-1),
+        get_pixel_value(img, center, x-1, y),
+        get_pixel_value(img, center, x-1, y+1),
+        get_pixel_value(img, center, x, y+1),
+        get_pixel_value(img, center, x+1, y+1),
+        get_pixel_value(img, center, x+1, y),
+        get_pixel_value(img, center, x+1, y-1),
+        get_pixel_value(img, center, x, y-1)
+    ]
     
-    # 順時針收集8個鄰居的值
-    val_ar.append(get_pixel_value(img, center, x-1, y-1))
-    val_ar.append(get_pixel_value(img, center, x-1, y))
-    val_ar.append(get_pixel_value(img, center, x-1, y+1))
-    val_ar.append(get_pixel_value(img, center, x, y+1))
-    val_ar.append(get_pixel_value(img, center, x+1, y+1))
-    val_ar.append(get_pixel_value(img, center, x+1, y))
-    val_ar.append(get_pixel_value(img, center, x+1, y-1))
-    val_ar.append(get_pixel_value(img, center, x, y-1))
-    
-    # 將二進制值轉換為十進制
+    # 二進制轉十進制
     power_val = [1, 2, 4, 8, 16, 32, 64, 128]
-    val = 0
-    for i in range(len(val_ar)):
-        val += val_ar[i] * power_val[i]
-    return val
+    return sum(val_ar[i] * power_val[i] for i in range(len(val_ar)))
 
 def get_lbp_image(image_path):
     """
@@ -56,31 +49,30 @@ def get_lbp_image(image_path):
     
     return lbp_array
 
-def get_lbp_histogram(lbp_array):
-    """
-    計算LBP特徵的直方圖
-    """
-    histogram = np.zeros(256, dtype=np.int32)
-    for i in range(lbp_array.shape[0]):
-        for j in range(lbp_array.shape[1]):
-            histogram[lbp_array[i][j]] += 1
-    return histogram
-
 # 使用範例
-def main_lbp():
-    # 替換成您的圖片路徑
-    image_path = "sobel_result.jpg"
+def main():
+    image_path = "sobel_result.jpg"  # 替換為您要處理的圖片路徑
     
     # 獲取LBP特徵圖
     lbp_image = get_lbp_image(image_path)
     
-    # 計算LBP直方圖
-    histogram = get_lbp_histogram(lbp_image)
-    
-    # 將LBP特徵圖保存
+    # 保存LBP特徵圖
     lbp_img = Image.fromarray(lbp_image)
-    lbp_img.save("lbp_result.jpg")
-    
-    return lbp_image, histogram
+    lbp_img.save("lbp_result.jpg")  # 保存為新的圖片
 
-main_lbp()
+    plt.figure(figsize=(12, 6))
+
+    plt.subplot(1, 2, 1)
+    plt.imshow(lbp_image, cmap='gray')
+    plt.title('LBP Image')
+    plt.axis('off')
+
+
+    plt.tight_layout()
+    plt.show()
+    
+    return lbp_image
+
+# 執行程式
+if __name__ == "__main__":
+    lbp_image = main()
