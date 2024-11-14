@@ -51,14 +51,14 @@ def get_lbp_image(image_path):
 
 # 使用範例
 def main():
-    image_path = "sobel_result.jpg"  # 替換為您要處理的圖片路徑
+    image_path = "picture/sobel_result.jpg"  # 替換為您要處理的圖片路徑
     
     # 獲取LBP特徵圖
     lbp_image = get_lbp_image(image_path)
     
     # 保存LBP特徵圖
     lbp_img = Image.fromarray(lbp_image)
-    lbp_img.save("lbp_result.jpg")  # 保存為新的圖片
+    lbp_img.save("picture/lbp_result.jpg")  # 保存為新的圖片
 
     plt.figure(figsize=(12, 6))
 

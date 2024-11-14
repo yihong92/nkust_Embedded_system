@@ -2,10 +2,8 @@ import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 
-def apply_sobel(image_path):
-    # 讀取圖片
-    img = cv2.imread(image_path)
-    
+def apply_sobel(img):
+
     # 轉換為灰度圖
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
@@ -48,9 +46,8 @@ def apply_sobel(image_path):
     plt.show()
     
     # 保存結果
-    cv2.imwrite('sobel_result.jpg', magnitude)
+    cv2.imwrite('picture\sobel_result.jpg', magnitude)
     
     return magnitude
 
 # 使用函數
-apply_sobel('road.jpg')

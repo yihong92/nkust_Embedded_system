@@ -1,43 +1,35 @@
-import numpy as np
 import cv2
+import numpy as np
 from matplotlib import pyplot as plt
 
-def calculate_histogram(image_path, num_bins=256, save_hist=False):
-    """
-    計算圖像灰度直方圖並找出頻率最高的灰度值。
-    
-    :param image_path: 圖像路徑
-    :param num_bins: 直方圖的分箱數
-    :param save_hist: 是否保存直方圖圖片
-    :return: 頻率最高的前三個灰度值及其直方圖
-    """
-    # 讀取灰度圖像
-    img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-    if img is None:
-        raise ValueError("Image not found or invalid format.")
-
+def calculate_histogram(image):
     # 計算直方圖
-    hist = cv2.calcHist([img], [0], None, [num_bins], [0, 256])
+    image = image.astype(np.uint8)
+    hist = cv2.calcHist([image], [0], None, [256], [0, 256])
+    
+    # 歸一化直方圖
+    #hist = cv2.normalize(hist, hist, 0, 255, cv2.NORM_MINMAX)
+    
+    return hist
 
-    # 找出頻率最高的前三個灰度值
-    top_3_values = np.argsort(hist.ravel())[::-1][:3]
-
-    # 打印結果
-    print("Top 3 Gray Values and Frequencies:")
-    for i, value in enumerate(top_3_values):
-        print(f"Rank {i+1}: Gray Value = {value}, Frequency = {int(hist[value])}")
-
-    # 顯示直方圖
-    plt.figure(figsize=(10, 5))
+def plot_histogram(hist, output_path='.picture/histogram.jpg'):
+    # 繪製直方圖
+    plt.figure(figsize=(10, 6))
     plt.plot(hist, color='black')
-    plt.title('Grayscale Histogram')
-    plt.xlabel('Gray Value')
+    plt.title('Histogram')
+    plt.xlabel('Pixel Value')
     plt.ylabel('Frequency')
-    if save_hist:
-        plt.savefig('histogram_output.png')  # 保存圖片
-    plt.show()
+    plt.xlim([0, 256])
+    plt.savefig(output_path, bbox_inches='tight', dpi=300)
+    plt.close()
 
-    return top_3_values, hist
+def find_top_three(hist):
+    top_three_indices = np.argsort(hist, axis=0)[-3:][::-1].flatten() # 找到前三大值的索引並展平 
+    top_three_values = hist[top_three_indices] # 找到前三大值的值並展平 
+    # 將結果轉換為可讀格式 
+    #top_three = [(int(idx), int(val[0])) for idx, val in zip(top_three_indices, top_three_values)] 
+    top_three = [int(idx) for  idx in top_three_indices] 
+    #top_three = [int(val[0]) for val in top_three_values]
+    print(top_three)
 
-# 使用範例
-top_3_values, histogram = calculate_histogram('lbp2_result.jpg', save_hist=True)
+    return top_three
