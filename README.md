@@ -5,4 +5,4 @@
 馬路分割 API
 ## HW_3
 馬路分割 程式碼及成果圖
-![image](https://github.com/yihong92/nkust_Embedded_system/blob/main/HW3/embedded_system/picture/final.jpg)
+![finalpicture](https://github.com/user-attachments/assets/2604e7c4-d116-4f61-b0e3-7eb92fda22a8)
